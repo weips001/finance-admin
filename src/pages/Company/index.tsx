@@ -1,11 +1,11 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Input, Drawer, Tag, Modal } from 'antd';
+import { Button, message, Input, Drawer, Tag } from 'antd';
 import React, { useState, useRef } from 'react';
-import { useIntl, FormattedMessage } from 'umi';
+import { useIntl } from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText, ProFormSelect, ProFormTextArea } from '@ant-design/pro-form';
+import { ModalForm, ProFormText, ProFormSelect } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
@@ -14,7 +14,6 @@ import type { TableListItem } from './data.d';
 import { queryRule, updateRule, addRule, removeRule } from './service';
 /**
  * 添加节点
- *
  * @param fields
  */
 
@@ -92,17 +91,17 @@ const compStatusList = {
     text: <Tag color="error">已过期</Tag>,
     status: 'Error',
   },
-}
-const filterSelect = (selectMap:any) => {
-  let list = []
-  for(let key in selectMap) {
+};
+const filterSelect = (selectMap: any) => {
+  const list = [];
+  for (const key in selectMap) {
     list.push({
       label: selectMap[key].text,
-      value: key
-    })
+      value: key,
+    });
   }
-  return list
-}
+  return list;
+};
 const TableList: React.FC = () => {
   /** 新建窗口的弹窗 */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -151,7 +150,7 @@ const TableList: React.FC = () => {
     {
       title: '公司状态',
       dataIndex: 'status',
-      valueEnum: compStatusList
+      valueEnum: compStatusList,
     },
     {
       title: '过期时间',
@@ -202,9 +201,9 @@ const TableList: React.FC = () => {
     },
   ];
 
-  const onVisibleChange = (visible:boolean) => {
-    handleModalVisible(visible)
-  }
+  const onVisibleChange = (visible: boolean) => {
+    handleModalVisible(visible);
+  };
   return (
     <PageContainer>
       <ProTable<TableListItem>

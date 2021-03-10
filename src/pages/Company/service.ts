@@ -20,7 +20,7 @@ export async function removeRule(params: { key: number[] }) {
 export async function addRule(data: TableListItem) {
   return request('/api/company', {
     method: 'POST',
-    data
+    data,
   });
 }
 
