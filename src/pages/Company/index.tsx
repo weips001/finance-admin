@@ -28,7 +28,8 @@ const handleAdd = async (fields: TableListItem) => {
     return true;
   } catch (error) {
     hide();
-    message.error('添加失败请重试！');
+    console.log(error)
+    message.error(`添加失败，失败原因：${error.msg}！`);
     return false;
   }
 };
@@ -99,7 +100,7 @@ const TableList: React.FC = () => {
       message.success('删除成功，即将刷新');
       return true
     } catch (error) {
-      message.error('删除失败，请重试');
+      message.error(`删除失败,失败原因：${error.msg}`);
       return false
     }
   };
@@ -166,6 +167,7 @@ const TableList: React.FC = () => {
       dataIndex: 'createTime',
       hideInForm: true,
       sorter: true,
+      hideInSearch: true,
       valueType: 'dateTime',
     },
     {
