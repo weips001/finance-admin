@@ -305,11 +305,6 @@ const TableList: React.FC = () => {
           name="userName"
         />
         <ProFormText
-          label="部门"
-          width="md"
-          name="department"
-        />
-        <ProFormText
           name="userPhone"
           label="联系方式"
           width="md"
@@ -326,14 +321,19 @@ const TableList: React.FC = () => {
           ]}
         />
         <ProFormText
-          name="userPhone"
+          label="部门"
+          width="md"
+          name="department"
+        />
+        <ProFormText
+          name="userEmail"
           label="邮箱"
           width="md"
           placeholder="请输入邮箱"
           rules={[
             {
-              pattern: /^1\d{10}$/,
-              message: '不合法的手机号格式!',
+              type: "email",
+              message: '不合法的邮箱格式!',
             },
           ]}
         />
