@@ -1,5 +1,6 @@
 export type TableListItem = {
   key: number;
+  id: string;
   disabled?: boolean;
   href: string;
   avatar: string;
@@ -25,6 +26,7 @@ export type TableListData = {
 };
 
 export type TableListParams = {
+  id: string
   status?: string;
   name?: string;
   desc?: string;

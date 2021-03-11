@@ -7,12 +7,11 @@ export async function queryRule(params?: TableListParams) {
   });
 }
 
-export async function removeRule(params: { key: number[] }) {
+export async function removeRule(deleteArr: string[]) {
   return request('/api/company', {
-    method: 'POST',
+    method: 'delete',
     data: {
-      ...params,
-      method: 'delete',
+      deleteArr
     },
   });
 }
@@ -24,12 +23,9 @@ export async function addRule(data: TableListItem) {
   });
 }
 
-export async function updateRule(params: TableListParams) {
-  return request('/api/company', {
-    method: 'POST',
-    data: {
-      ...params,
-      method: 'update',
-    },
+export async function updateRule(data: TableListParams) {
+  return request(`/api/company/${data.id}`, {
+    method: 'PUT',
+    data,
   });
 }
