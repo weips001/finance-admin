@@ -21,7 +21,7 @@ const codeMessage: Record<number, string> = {
 };
 
 /** 异常处理程序 */
-const errorHandler = (error: { response: Response }): Response => {
+const errorHandler = (error: { response: Response}): Response => {
   const { response } = error;
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
@@ -42,8 +42,24 @@ const errorHandler = (error: { response: Response }): Response => {
 
 /** 配置request请求时的默认参数 */
 const request = extend({
-  errorHandler, // 默认错误处理
+  // errorHandler, // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
+});
+
+request.interceptors.response.use(async (response, options) => {
+  // const contentType = response.headers.get('Content-Type');
+  console.log('1')
+  const res = await response.clone().json();
+  const {code, msg} = res
+  if (code === 0) {
+    return response
+  }
+  // notification.error({
+  //   message: `请求错误`,
+  //   description: msg,
+  // });
+  return Promise.reject(res);
+  // throw new Error()
 });
 
 export default request;

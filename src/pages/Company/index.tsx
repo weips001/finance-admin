@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Input, Drawer, Tag, FormInstance } from 'antd';
+import { Button, message, Input, Modal, Drawer, Tag, FormInstance } from 'antd';
 import React, { useState, useRef } from 'react';
 import { useIntl } from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
@@ -11,6 +11,8 @@ import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
 import type { TableListItem } from './data.d';
 import { queryRule, updateRule, addRule, removeRule } from './service';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+const {confirm} = Modal
 /**
  * 添加节点
  * @param fields
@@ -50,26 +52,10 @@ const handleUpdate = async (fields: FormValueType) => {
     return false;
   }
 };
-/**
- * 删除节点
- *
- * @param selectedRows
- */
 
-const handleRemove = async (selectedRows: string[]) => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-  try {
-    await removeRule(selectedRows);
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
+
+
+
 const compStatusList = {
   0: {
     text: <Tag color="default">体验期</Tag>,
@@ -104,8 +90,41 @@ const TableList: React.FC = () => {
   const modalRef = useRef<FormInstance>()
   const [currentRow, setCurrentRow] = useState<TableListItem>();
   const [selectedRowsState, setSelectedRows] = useState<string[]>([]);
-  /** 国际化配置 */
+  
+  const handleRemove = async (selectedRows: string[]) => {
+    if (!selectedRows) return true;
+    try {
+      await removeRule(selectedRows);
+      actionRef.current?.reloadAndRest?.();
+      message.success('删除成功，即将刷新');
+      return true
+    } catch (error) {
+      message.error('删除失败，请重试');
+      return false
+    }
+  };
 
+  /**
+   * 删除节点
+   *
+   * @param selectedRows
+   */
+  const confirmDel = (selectedRows:string[]) => {
+    confirm({
+      title: '是否确认删除',
+      icon: <ExclamationCircleOutlined />,
+      content: '您正在删除当前数据，是否继续？',
+      okText: '确定',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk() {
+        return handleRemove(selectedRows)
+      },
+      onCancel() {},
+    })
+  }
+
+  /** 国际化配置 */
   const intl = useIntl();
   const columns: ProColumns<TableListItem>[] = [
     {
@@ -132,6 +151,15 @@ const TableList: React.FC = () => {
           </a>
         );
       },
+    },
+    {
+      title: '公司联系人',
+      dataIndex: 'bossName',
+    },
+    {
+      title: '联系方式',
+      hideInForm: true,
+      dataIndex: 'bossPhone',
     },
     {
       title: '创建时间',
@@ -189,8 +217,8 @@ const TableList: React.FC = () => {
           编辑
         </a>,
         <a key="subscribeAlert" onClick={async () => {
-          await handleRemove([record.id])
-          actionRef.current?.reloadAndRest?.();
+          await confirmDel([record.id])
+          
         }}>
           删除
         </a>,
@@ -255,9 +283,8 @@ const TableList: React.FC = () => {
         >
           <Button
             onClick={async () => {
-              await handleRemove(selectedRowsState);
+              await confirmDel(selectedRowsState);
               setSelectedRows([]);
-              actionRef.current?.reloadAndRest?.();
             }}
           >
             批量删除
@@ -313,18 +340,22 @@ const TableList: React.FC = () => {
           width="md"
           name="compName"
         />
-        <ProFormSelect
+        <ProFormText
+          label="公司联系人"
+          width="md"
+          name="bossName"
+        />
+        <ProFormText
+          name="bossPhone"
+          label="联系方式"
+          width="md"
+          placeholder="请输入联系方式"
           rules={[
             {
-              required: true,
-              message: '公司状态为必填项',
+              pattern: /^1\d{10}$/,
+              message: '不合法的手机号格式!',
             },
           ]}
-          initialValue="0"
-          options={filterSelect(compStatusList)}
-          width="md"
-          name="status"
-          label="公司状态"
         />
       </ModalForm>
       <Drawer
