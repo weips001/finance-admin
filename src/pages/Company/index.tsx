@@ -59,7 +59,6 @@ const handleUpdate = async (fields: FormValueType) => {
 const handleRemove = async (selectedRows: string[]) => {
   const hide = message.loading('正在删除');
   if (!selectedRows) return true;
-
   try {
     await removeRule(selectedRows);
     hide();
@@ -138,6 +137,7 @@ const TableList: React.FC = () => {
       title: '创建时间',
       dataIndex: 'createTime',
       hideInForm: true,
+      sorter: true,
       valueType: 'dateTime',
     },
     {
@@ -229,7 +229,6 @@ const TableList: React.FC = () => {
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
-            console.log(selectedRows)
             const ids = selectedRows.map(item => item.id)
             setSelectedRows(ids);
           },
