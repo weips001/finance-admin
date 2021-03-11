@@ -5,7 +5,7 @@ import { useIntl } from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText, ProFormSelect } from '@ant-design/pro-form';
+import { ModalForm, ProFormText } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
@@ -71,16 +71,7 @@ const compStatusList = {
     status: 'Error',
   },
 };
-const filterSelect = (selectMap: any) => {
-  const list = [];
-  for (const key in selectMap) {
-    list.push({
-      label: selectMap[key].text,
-      value: key,
-    });
-  }
-  return list;
-};
+
 const TableList: React.FC = () => {
   /** 新建窗口的弹窗 */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -125,8 +116,6 @@ const TableList: React.FC = () => {
     })
   }
 
-  /** 国际化配置 */
-  const intl = useIntl();
   const columns: ProColumns<TableListItem>[] = [
     {
       title: '公司名称',
@@ -181,27 +170,6 @@ const TableList: React.FC = () => {
       hideInSearch: true,
       dataIndex: 'dueDate',
       valueType: 'dateTime',
-      renderFormItem: (item, { defaultRender, ...rest }, form) => {
-        const status = form.getFieldValue('status');
-
-        if (`${status}` === '0') {
-          return false;
-        }
-
-        if (`${status}` === '3') {
-          return (
-            <Input
-              {...rest}
-              placeholder={intl.formatMessage({
-                id: 'pages.searchTable.exception',
-                defaultMessage: '请输入异常原因！',
-              })}
-            />
-          );
-        }
-
-        return defaultRender(item);
-      },
     },
     {
       title: '操作',
@@ -234,10 +202,7 @@ const TableList: React.FC = () => {
   return (
     <PageContainer>
       <ProTable<TableListItem>
-        headerTitle={intl.formatMessage({
-          id: 'pages.searchTable.title',
-          defaultMessage: '查询表格',
-        })}
+        headerTitle="查询表格"
         bordered={true}
         actionRef={actionRef}
         rowKey="id"
@@ -296,10 +261,7 @@ const TableList: React.FC = () => {
       )}
       <ModalForm
         formRef={modalRef}
-        title={intl.formatMessage({
-          id: 'pages.searchTable.createForm.newRule',
-          defaultMessage: '新建规则',
-        })}
+        title={currentRow ? "编辑公司": "新建公司"}
         width="400px"
         modalProps={{
           afterClose() {
@@ -369,15 +331,15 @@ const TableList: React.FC = () => {
         }}
         closable={false}
       >
-        {currentRow?.name && (
+        {currentRow?.id && (
           <ProDescriptions<TableListItem>
             column={2}
-            title={currentRow?.name}
+            title={currentRow?.compName}
             request={async () => ({
               data: currentRow || {},
             })}
             params={{
-              id: currentRow?.name,
+              id: currentRow?.compName,
             }}
             columns={columns as ProDescriptionsItemProps<TableListItem>[]}
           />
