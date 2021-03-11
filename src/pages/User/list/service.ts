@@ -1,38 +1,31 @@
 import request from '@/utils/request';
 import type { TableListParams, TableListItem } from './data.d';
 
-export async function getTableList(params?: TableListParams) {
+export async function queryRule(params?: TableListParams) {
   return request('/api/user', {
     params,
   });
 }
 
-export async function removeRule(params: { key: number[] }) {
-  return request('/api/rule', {
-    method: 'POST',
+export async function removeRule(deleteArr: string[]) {
+  return request('/api/user', {
+    method: 'delete',
     data: {
-      ...params,
-      method: 'delete',
+      deleteArr
     },
   });
 }
 
-export async function addRule(params: TableListItem) {
-  return request('/api/rule', {
+export async function addRule(data: TableListItem) {
+  return request('/api/user', {
     method: 'POST',
-    data: {
-      ...params,
-      method: 'post',
-    },
+    data,
   });
 }
 
-export async function updateRule(params: TableListParams) {
-  return request('/api/rule', {
-    method: 'POST',
-    data: {
-      ...params,
-      method: 'update',
-    },
+export async function updateRule(data: TableListParams) {
+  return request(`/api/user/${data.id}`, {
+    method: 'PUT',
+    data,
   });
 }

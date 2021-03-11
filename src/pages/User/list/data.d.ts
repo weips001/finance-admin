@@ -1,16 +1,13 @@
 export type TableListItem = {
-  key: number;
-  disabled?: boolean;
-  href: string;
-  avatar: string;
-  name: string;
-  owner: string;
-  desc: string;
-  callNo: number;
-  status: number;
-  updatedAt: Date;
-  createdAt: Date;
-  progress: number;
+  id: string;
+  userCode: string;
+  status: string;
+  userName: string;
+  department: string;
+  userPhone: string;
+  userEmail: string;
+  status: string;
+  createTime: string;
 };
 
 export type TableListPagination = {
@@ -25,10 +22,13 @@ export type TableListData = {
 };
 
 export type TableListParams = {
+  id?: string;
   status?: string;
-  name?: string;
-  desc?: string;
-  key?: number;
+  userCode?: string;
+  userName?: string;
+  userPhone?: string;
+  department?: string;
+  userEmail?: string;
   pageSize?: number;
   currentPage?: number;
   filter?: Record<string, any[]>;
