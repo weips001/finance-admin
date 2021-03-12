@@ -67,6 +67,10 @@ const userStatusList = {
   },
 };
 
+const filterSelect = () => {
+
+}
+
 const TableList: React.FC = () => {
   /** 新建窗口的弹窗 */
   const [createModalVisible, handleModalVisible] = useState<boolean>(false);
@@ -262,6 +266,7 @@ const TableList: React.FC = () => {
         visible={createModalVisible}
         onVisibleChange={onVisibleChange}
         onFinish={async (value) => {
+          console.log('---', value)
           let success
           if(currentRow?.id) {
             const params = {

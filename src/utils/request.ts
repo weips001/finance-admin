@@ -44,6 +44,9 @@ const errorHandler = (error: { response: Response}): Response => {
 const request = extend({
   // errorHandler, // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
+  headers: {
+    compId: 'e88149e0-826f-11eb-90cd-c90d111c932a'
+  }
 });
 
 request.interceptors.response.use(async (response, options) => {
