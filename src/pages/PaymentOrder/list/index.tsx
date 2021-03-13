@@ -1,7 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, message, Input, Modal, Drawer, Tag, FormInstance } from 'antd';
 import React, { useState, useRef } from 'react';
-import { useIntl } from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
@@ -12,6 +11,7 @@ import type { FormValueType } from './components/UpdateForm';
 import type { TableListItem } from './data.d';
 import { queryRule, updateRule, addRule, removeRule } from './service';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { history } from 'umi'
 const {confirm} = Modal
 /**
  * 添加节点
@@ -118,17 +118,9 @@ const TableList: React.FC = () => {
 
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '公司名称',
-      dataIndex: 'compName',
+      title: '付款单号',
+      dataIndex: 'paymentOrderId',
       tip: '规则名称是唯一的 key',
-      formItemProps: {
-        rules: [
-          {
-            required: true,
-            message: '此项为必填项',
-          },
-        ],
-      },
       render: (dom, entity) => {
         return (
           <a
@@ -143,39 +135,36 @@ const TableList: React.FC = () => {
       },
     },
     {
-      title: '公司联系人',
-      dataIndex: 'bossName',
+      title: '申请人',
+      dataIndex: 'applyUserName',
     },
     {
-      title: '联系方式',
-      hideInForm: true,
-      dataIndex: 'bossPhone',
+      title: '收款人全称',
+      dataIndex: 'payeeName',
     },
     {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      hideInForm: true,
+      title: '付款金额',
+      dataIndex: 'payMoney',
+    },
+    {
+      title: '付款时间',
+      dataIndex: 'payTime',
       sorter: true,
       hideInSearch: true,
-      valueType: 'dateTime',
+      valueType: 'date',
     },
     {
-      title: '公司状态',
+      title: '状态',
       dataIndex: 'status',
       valueEnum: compStatusList,
-    },
-    {
-      title: '过期时间',
-      sorter: true,
-      hideInSearch: true,
-      dataIndex: 'dueDate',
-      valueType: 'dateTime',
     },
     {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
       render: (_, record) => [
+        <a key="publish" onClick={() => {}}>提交</a>,
+        <a key="publish" onClick={() => {}}>继续付款</a>,
         <a
           key="config"
           onClick={() => {
@@ -214,7 +203,8 @@ const TableList: React.FC = () => {
             type="primary"
             key="primary"
             onClick={() => {
-              handleModalVisible(true);
+              // handleModalVisible(true);
+              history.push('/payment-order/create')
             }}
           >
             <PlusOutlined /> 新增

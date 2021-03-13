@@ -65,7 +65,23 @@
                 name: '付款申请单',
                 icon: 'table',
                 path: '/payment-order',
+                component: './PaymentOrder/list',
+              },
+              {
+                name: '付款申请单',
+                icon: 'table',
+                path: '/payment-order',
                 component: './PaymentOrder',
+                hideInMenu: true,
+                routes: [
+                  {
+                    path: '/payment-order/create',
+                    name: '创建',
+                    icon: 'smile',
+                    hideInMenu: true,
+                    component: './PaymentOrder/create',
+                  }
+                ]
               },
               {
                 name: '人员管理',
