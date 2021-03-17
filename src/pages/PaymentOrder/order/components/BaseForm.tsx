@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { message, Card, Form, FormInstance } from 'antd';
+import { Button, Card, Form, FormInstance } from 'antd';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProForm, { ProFormText,ProFormTextArea, ProFormDigit, ProFormRadio, ProFormDatePicker, ProFormDateRangePicker, ProFormSelect } from '@ant-design/pro-form';
 import styles from './index.less'
@@ -14,12 +14,18 @@ const waitTime = (time: number = 100) => {
 
 type BaseFormProps = {
   formType: "create" | "update"
-  onFinish: (values: Record<string, any>) => Promise<boolean | void>
+  onFinish?: (values: Record<string, any>) => Promise<boolean | void>
+  onSave?: (values: Record<string, any>) => Promise<boolean | void>
 }
 
 const BaseForm: React.FC<BaseFormProps> = (props) => {
-  const {onFinish} = props
+  const {onFinish, onSave} = props
   const formRef = useRef<FormInstance>()
+
+  const saveOrder = () => {
+    const values = formRef.current?.getFieldsValue()
+    onSave(values)
+  }
 
   return <ProForm<{
     name: string;
@@ -31,6 +37,8 @@ const BaseForm: React.FC<BaseFormProps> = (props) => {
         submitText: '提交',
       },
       render(_, dom) {
+        console.log(dom)
+        dom.push(<Button key="save" onClick={saveOrder}>保存</Button>)
         return <FooterToolbar>{dom}</FooterToolbar>
       }
     }}
@@ -38,8 +46,6 @@ const BaseForm: React.FC<BaseFormProps> = (props) => {
     onFinish={(values) => onFinish(values)}
     onReset={() => console.log(123)}
     initialValues={{
-      name: '蚂蚁设计有限公司',
-      useMode: 'chapter',
       createTime: new Date(),
       hasLastTime: '1',
       hasNote: '1'

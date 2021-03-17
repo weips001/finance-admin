@@ -7,9 +7,9 @@ import ProTable from '@ant-design/pro-table';
 import { ModalForm, ProFormText } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
-import type { FormValueType } from './components/UpdateForm';
-import type { TableListItem } from './data.d';
-import { queryRule, updateRule, addRule, removeRule } from './service';
+// import type { FormValueType } from '/components/UpdateForm';
+import type { TableListItem } from '../data.d';
+import { getTableList, update, add, remove } from '../service';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { history } from 'umi'
 const {confirm} = Modal
@@ -22,7 +22,7 @@ const handleAdd = async (fields: TableListItem) => {
   const hide = message.loading('正在添加');
 
   try {
-    await addRule({ ...fields });
+    await add({ ...fields });
     hide();
     message.success('添加成功');
     return true;
@@ -43,7 +43,7 @@ const handleUpdate = async (fields: FormValueType) => {
   const hide = message.loading('正在配置');
 
   try {
-    await updateRule(fields);
+    await update(fields);
     hide();
     message.success('配置成功');
     return true;
@@ -86,7 +86,7 @@ const TableList: React.FC = () => {
   const handleRemove = async (selectedRows: string[]) => {
     if (!selectedRows) return true;
     try {
-      await removeRule(selectedRows);
+      await remove(selectedRows);
       actionRef.current?.reloadAndRest?.();
       message.success('删除成功，即将刷新');
       return true
@@ -210,7 +210,7 @@ const TableList: React.FC = () => {
             <PlusOutlined /> 新增
           </Button>,
         ]}
-        request={(params, sorter, filter) => queryRule({ ...params, sorter, filter })}
+        request={(params, sorter, filter) => getTableList({ ...params, sorter, filter })}
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
@@ -249,7 +249,7 @@ const TableList: React.FC = () => {
           <Button type="primary">批量审批</Button>
         </FooterToolbar>
       )}
-      <ModalForm
+      {/* <ModalForm
         formRef={modalRef}
         title={currentRow ? "编辑公司": "新建公司"}
         width="400px"
@@ -321,7 +321,7 @@ const TableList: React.FC = () => {
             },
           ]}
         />
-      </ModalForm>
+      </ModalForm> */}
       <Drawer
         width={600}
         visible={showDetail}

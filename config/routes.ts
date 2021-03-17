@@ -79,7 +79,7 @@
                     name: '创建',
                     icon: 'smile',
                     hideInMenu: true,
-                    component: './PaymentOrder/create',
+                    component: './PaymentOrder/order/create',
                   }
                 ]
               },
