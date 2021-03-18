@@ -1,7 +1,8 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { Button, Card, Form, FormInstance } from 'antd';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import ProForm, { ProFormText,ProFormTextArea, ProFormDigit, ProFormRadio, ProFormDatePicker, ProFormDateRangePicker, ProFormSelect } from '@ant-design/pro-form';
+import {getItemDetail} from '../../service'
 import styles from './index.less'
 
 const waitTime = (time: number = 100) => {
@@ -14,18 +15,27 @@ const waitTime = (time: number = 100) => {
 
 type BaseFormProps = {
   formType: "create" | "update"
+  id?: string
   onFinish?: (values: Record<string, any>) => Promise<boolean | void>
   onSave?: (values: Record<string, any>) => Promise<boolean | void>
 }
 
 const BaseForm: React.FC<BaseFormProps> = (props) => {
-  const {onFinish, onSave} = props
+  const {onFinish, onSave, id, formType} = props
   const formRef = useRef<FormInstance>()
 
   const saveOrder = () => {
     const values = formRef.current?.getFieldsValue()
     onSave(values)
   }
+  const getDetail = async(id: string) => {
+    const res = await getItemDetail(id)
+    formRef.current?.setFieldsValue(res.data)
+    // console.log(res)
+  }
+  useEffect(() => {
+    getDetail(id as string)
+  }, [id])
 
   return <ProForm<{
     name: string;
@@ -34,17 +44,19 @@ const BaseForm: React.FC<BaseFormProps> = (props) => {
     submitter={{
       searchConfig: {
         resetText: '取消',
-        submitText: '提交',
+        submitText: formType === 'create' ? '提交' : '编辑',
       },
       render(_, dom) {
-        console.log(dom)
-        dom.push(<Button key="save" onClick={saveOrder}>保存</Button>)
+        if (formType === 'create') {
+          dom.push(<Button key="save" onClick={saveOrder}>保存</Button>)
+          return <FooterToolbar>{dom}</FooterToolbar>
+        }
         return <FooterToolbar>{dom}</FooterToolbar>
       }
     }}
     formRef={formRef}
     onFinish={(values) => onFinish(values)}
-    onReset={() => console.log(123)}
+    onReset={() => history.back()}
     initialValues={{
       createTime: new Date(),
       hasLastTime: '1',
@@ -202,7 +214,7 @@ const BaseForm: React.FC<BaseFormProps> = (props) => {
           <Form.Item noStyle shouldUpdate>
             {(form) => {
               if(form.getFieldValue("hasLastTime") === '0') {
-                return <ProFormDatePicker rules={[{required: true}]} name="date" width="sm" label="最晚付款时间" />
+                return <ProFormDatePicker rules={[{required: true}]} name="latestPayTime" width="sm" label="最晚付款时间" />
               }
               return null
             }}

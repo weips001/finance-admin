@@ -1,17 +1,17 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, message, Input, Modal, Drawer, Tag, FormInstance } from 'antd';
 import React, { useState, useRef } from 'react';
+import { useIntl } from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText } from '@ant-design/pro-form';
+import ProForm, { ModalForm, ProFormText, ProFormDigit, ProFormDateTimePicker } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
-// import type { FormValueType } from '/components/UpdateForm';
-import type { TableListItem } from '../data.d';
-import { getTableList, update, add, remove, submit } from '../service';
+import type { FormValueType } from './components/UpdateForm';
+import type { TableListItem } from './data.d';
+import { getTableList, update, add, remove } from './service';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { history } from 'umi'
 const {confirm} = Modal
 /**
  * 添加节点
@@ -59,20 +59,16 @@ const handleUpdate = async (fields: FormValueType) => {
 
 const compStatusList = {
   0: {
-    text: <Tag color="default">草稿</Tag>,
+    text: <Tag color="default">体验期</Tag>,
     status: 'Default',
   },
   1: {
-    text: <Tag color="success">已提交</Tag>,
+    text: <Tag color="success">已激活</Tag>,
     status: 'Success',
   },
   2: {
-    text: <Tag color="error">已退回</Tag>,
+    text: <Tag color="error">已过期</Tag>,
     status: 'Error',
-  },
-  3: {
-    text: <Tag color="processing">已完成</Tag>,
-    status: 'Processing',
   },
 };
 
@@ -119,14 +115,12 @@ const TableList: React.FC = () => {
       onCancel() {},
     })
   }
-  const submitOrder = async (id: string) => {
-    await submit(id)
-  }
+
   const columns: ProColumns<TableListItem>[] = [
     {
-      title: '付款单号',
-      dataIndex: 'paymentOrderId',
-      tip: '规则名称是唯一的 key',
+      title: '发票号码',
+      dataIndex: 'billNumber',
+      tip: '发票号码是唯一的',
       render: (dom, entity) => {
         return (
           <a
@@ -141,67 +135,60 @@ const TableList: React.FC = () => {
       },
     },
     {
-      title: '申请人',
-      dataIndex: 'applyUserName',
+      title: '发票代码',
+      hideInSearch: true,
+      dataIndex: 'billCode',
     },
     {
-      title: '收款人全称',
-      dataIndex: 'payeeName',
+      title: '发票金额',
+      hideInSearch: true,
+      dataIndex: 'money',
     },
     {
-      title: '付款金额',
-      dataIndex: 'payMoney',
+      title: '报销人',
+      dataIndex: 'applyUser'
     },
     {
-      title: '付款时间',
-      dataIndex: 'payTime',
+      title: '凭证号',
+      dataIndex: 'voucherNumber'
+    },
+    {
+      title: '开票时间',
+      dataIndex: 'billDate',
+      hideInForm: true,
       sorter: true,
       hideInSearch: true,
-      valueType: 'date',
+      valueType: 'dateTime',
     },
     {
-      title: '状态',
-      dataIndex: 'status',
-      valueEnum: compStatusList,
+      title: '录入时间',
+      dataIndex: 'createTime',
+      hideInForm: true,
+      sorter: true,
+      valueType: 'dateTime',
     },
     {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
-      render: (_, record) => {
-        const submitBtn = <a key="publish" onClick={() => submitOrder(record.id)}>提交</a>
-        const continuePayBtn = <a key="publish" onClick={() => {}}>继续付款</a>
-        const editBtn = <a
-          key="edit"
+      render: (_, record) => [
+        <a
+          key="config"
           onClick={() => {
-            history.push(`/payment-order/update/${record.id}`)
+            handleModalVisible(true);
+            setCurrentRow(record);
+            modalRef.current?.setFieldsValue(record)
           }}
         >
           编辑
-        </a>
-        const removeBtn = <a key="remove" onClick={async () => {
+        </a>,
+        <a key="subscribeAlert" onClick={async () => {
           await confirmDel([record.id])
           
         }}>
           删除
-        </a>
-        const printBtn = <a key="print" onClick={async () => {
-          // await confirmDel([record.id])
-          
-        }}>
-          下载
-        </a>
-        const btnList = []
-        if(record.status === '0') {
-          btnList.push(submitBtn, editBtn, removeBtn)
-        }
-        if(record.status === '1') {
-          btnList.push(printBtn)
-        }
-        if(record.status === '3') {
-          btnList.push(continuePayBtn)
-        }
-        return btnList},
+        </a>,
+      ],
     },
   ];
 
@@ -223,8 +210,7 @@ const TableList: React.FC = () => {
             type="primary"
             key="primary"
             onClick={() => {
-              // handleModalVisible(true);
-              history.push('/payment-order/create')
+              handleModalVisible(true);
             }}
           >
             <PlusOutlined /> 新增
@@ -269,10 +255,10 @@ const TableList: React.FC = () => {
           <Button type="primary">批量审批</Button>
         </FooterToolbar>
       )}
-      {/* <ModalForm
+      <ModalForm
         formRef={modalRef}
-        title={currentRow ? "编辑公司": "新建公司"}
-        width="400px"
+        title={currentRow ? "编辑发票": "新建发票"}
+        width="800px"
         modalProps={{
           afterClose() {
             setCurrentRow(undefined)
@@ -303,45 +289,66 @@ const TableList: React.FC = () => {
           }
         }}
       >
-        <ProFormText
-          rules={[
-            {
-              required: true,
-              message: '公司名称为必填项',
-            },
-          ]}
-          label="公司名称"
-          width="md"
-          name="compName"
-        />
-        <ProFormText
-          label="公司联系人"
-          width="md"
-          rules={[
-            {
-              required: true,
-              message: '公司名称为必填项',
-            },
-          ]}
-          name="bossName"
-        />
-        <ProFormText
-          name="bossPhone"
-          label="联系方式"
-          width="md"
-          placeholder="请输入联系方式"
-          rules={[
-            {
-              required: true,
-              message: '公司名称为必填项',
-            },
-            {
-              pattern: /^1\d{10}$/,
-              message: '不合法的手机号格式!',
-            },
-          ]}
-        />
-      </ModalForm> */}
+        <ProForm.Group>
+          <ProFormText
+            rules={[
+              {
+                required: true,
+                message: '发票号码为必填项',
+              },
+            ]}
+            label="发票号码"
+            width="sm"
+            name="billNumber"
+          />
+          <ProFormText
+            label="发票代码"
+            width="sm"
+            rules={[
+              {
+                required: true,
+                message: '发票代码为必填项',
+              },
+            ]}
+            name="billCode"
+          />
+          <ProFormDigit
+            label="发票金额"
+            width="sm"
+            rules={[
+              {
+                required: true,
+                message: '发票金额为必填项',
+              },
+            ]}
+            name="money"
+            min={0}
+            fieldProps={{ precision: 2 }}
+          />
+        </ProForm.Group>
+        <ProForm.Group>
+          
+          <ProFormDateTimePicker width="sm" name="billDate" label="发票日期" />
+          <ProFormText
+            label="校验码"
+            width="sm"
+            name="checkCode"
+          />
+        </ProForm.Group>
+        <ProForm.Group>
+          <ProFormText
+            label="报销人"
+            width="sm"
+            name="applyUser"
+          />
+          <ProFormText
+            label="凭证号"
+            width="sm"
+            name="voucherNumber"
+          />
+        </ProForm.Group>
+        
+      </ModalForm>
       <Drawer
         width={600}
         visible={showDetail}

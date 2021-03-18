@@ -80,8 +80,21 @@
                     icon: 'smile',
                     hideInMenu: true,
                     component: './PaymentOrder/order/create',
+                  },
+                  {
+                    path: '/payment-order/update/:id',
+                    name: '编辑',
+                    icon: 'smile',
+                    hideInMenu: true,
+                    component: './PaymentOrder/order/update',
                   }
                 ]
+              },
+              {
+                name: '发票管理',
+                icon: 'table',
+                path: '/bill',
+                component: './Bill',
               },
               {
                 name: '人员管理',

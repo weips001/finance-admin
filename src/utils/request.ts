@@ -1,6 +1,6 @@
 /** Request 网络请求工具 更详细的 api 文档: https://github.com/umijs/umi-request */
 import { extend } from 'umi-request';
-import { notification } from 'antd';
+import { message, notification } from 'antd';
 
 const codeMessage: Record<number, string> = {
   200: '服务器成功返回请求的数据。',
@@ -51,16 +51,18 @@ const request = extend({
 
 request.interceptors.response.use(async (response, options) => {
   // const contentType = response.headers.get('Content-Type');
-  console.log('1')
+  // console.log('1')
   const res = await response.clone().json();
   const {code, msg} = res
   if (code === 0) {
+    // message.success(msg)
     return response
   }
-  // notification.error({
-  //   message: `请求错误`,
-  //   description: msg,
-  // });
+  notification.error({
+    message: `操作失败`,
+    description: msg,
+  });
+  // message.error(msg)
   return Promise.reject(res);
   // throw new Error()
 });

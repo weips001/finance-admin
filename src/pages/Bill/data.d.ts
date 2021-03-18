@@ -8,7 +8,6 @@ export type TableListItem = {
   dueDate: string;
   dueDate: string;
   createTime: number;
-  status: string
 };
 
 export type TableListPagination = {
