@@ -11,3 +11,10 @@ export async function queryCurrent(): Promise<any> {
 export async function queryNotices(): Promise<any> {
   return request('/api/notices');
 }
+
+export async function addTest(data:any): Promise<any> {
+  return request('/api/test',{
+    method: 'POST',
+    data
+  });
+}

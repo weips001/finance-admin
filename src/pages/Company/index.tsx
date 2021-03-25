@@ -165,6 +165,10 @@ const TableList: React.FC = () => {
       valueEnum: compStatusList,
     },
     {
+      title: '验证码',
+      dataIndex: 'code',
+    },
+    {
       title: '过期时间',
       sorter: true,
       hideInSearch: true,
