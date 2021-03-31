@@ -11,7 +11,7 @@ import { Alert, Space, message, Tabs } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
 import { useIntl, connect } from 'umi';
-import { getFakeCaptcha } from '@/services/login';
+import { getFakeCaptcha, login } from '@/services/login';
 import type { Dispatch } from 'umi';
 import type { StateType } from '@/models/login';
 import type { LoginParamsType } from '@/services/login';
@@ -44,11 +44,12 @@ const Login: React.FC<LoginProps> = (props) => {
   const intl = useIntl();
 
   const handleSubmit = (values: LoginParamsType) => {
-    const { dispatch } = props;
-    dispatch({
-      type: 'login/login',
-      payload: { ...values, type },
-    });
+    // const { dispatch } = props;
+    // dispatch({
+    //   type: 'login/login',
+    //   payload: { ...values, type },
+    // });
+    login(values)
   };
 
   return (
@@ -72,7 +73,7 @@ const Login: React.FC<LoginProps> = (props) => {
           return Promise.resolve();
         }}
       >
-        <Tabs activeKey={type} onChange={setType}>
+        {/* <Tabs activeKey={type} onChange={setType}>
           <Tabs.TabPane
             key="account"
             tab={intl.formatMessage({
@@ -87,7 +88,7 @@ const Login: React.FC<LoginProps> = (props) => {
               defaultMessage: '手机号登录',
             })}
           />
-        </Tabs>
+        </Tabs> */}
 
         {status === 'error' && loginType === 'account' && !submitting && (
           <LoginMessage
@@ -105,10 +106,7 @@ const Login: React.FC<LoginProps> = (props) => {
                 size: 'large',
                 prefix: <UserOutlined className={styles.prefixIcon} />,
               }}
-              placeholder={intl.formatMessage({
-                id: 'pages.login.username.placeholder',
-                defaultMessage: '用户名: admin or user',
-              })}
+              placeholder="请输入手机号"
               rules={[
                 {
                   required: true,
@@ -122,10 +120,7 @@ const Login: React.FC<LoginProps> = (props) => {
                 size: 'large',
                 prefix: <LockOutlined className={styles.prefixIcon} />,
               }}
-              placeholder={intl.formatMessage({
-                id: 'pages.login.password.placeholder',
-                defaultMessage: '密码: ant.design',
-              })}
+              placeholder="请输入密码"
               rules={[
                 {
                   required: true,
@@ -223,12 +218,12 @@ const Login: React.FC<LoginProps> = (props) => {
           </a>
         </div>
       </ProForm>
-      <Space className={styles.other}>
+      {/* <Space className={styles.other}>
         其他登录方式 :
         <AlipayCircleOutlined className={styles.icon} />
         <TaobaoCircleOutlined className={styles.icon} />
         <WeiboCircleOutlined className={styles.icon} />
-      </Space>
+      </Space> */}
     </div>
   );
 };
