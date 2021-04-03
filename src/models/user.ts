@@ -66,7 +66,7 @@ const UserModel: UserModelType = {
       setAuthority(allAuth)
       yield put({
         type: 'saveCurrentUser',
-        payload: response,
+        payload: userInfo,
       });
       yield put({
         type: 'saveCurrentAuthList',

@@ -53,7 +53,8 @@ request.interceptors.request.use((request: string, options:RequestOptionsInit) =
   if(token) {
     options.headers = {
       ...options.headers,
-      token
+      token,
+      authorization: token
     }
   }
   if(compid) {

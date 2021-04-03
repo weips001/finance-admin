@@ -4,7 +4,7 @@ import { history } from 'umi';
 
 import { fakeAccountLogin } from '@/services/login';
 import { setAuthority } from '@/utils/authority';
-import { getPageQuery } from '@/utils/utils';
+import { getPageQuery, saveUserInfo } from '@/utils/utils';
 import { message } from 'antd';
 
 export type StateType = {
@@ -64,6 +64,7 @@ const Model: LoginModelType = {
     logout() {
       const { redirect } = getPageQuery();
       // Note: There may be security issues, please note
+      saveUserInfo('')
       if (window.location.pathname !== '/user/login' && !redirect) {
         history.replace({
           pathname: '/user/login',
