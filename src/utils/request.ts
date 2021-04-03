@@ -1,5 +1,5 @@
 /** Request 网络请求工具 更详细的 api 文档: https://github.com/umijs/umi-request */
-import { extend } from 'umi-request';
+import { extend, RequestOptionsInit } from 'umi-request';
 import { notification } from 'antd';
 
 const codeMessage: Record<number, string> = {
@@ -44,10 +44,25 @@ const errorHandler = (error: { response: Response}): Response => {
 const request = extend({
   // errorHandler, // 默认错误处理
   credentials: 'include', // 默认请求是否带上cookie
-  headers: {
-    compid: ''
-  }
 });
+
+request.interceptors.request.use((request: string, options:RequestOptionsInit) => {
+  const token = localStorage.getItem('token')
+  const compid = localStorage.getItem('compid')
+  if(token) {
+    options.headers = {
+      ...options.headers,
+      token
+    }
+  }
+  if(compid) {
+    options.headers = {
+      ...options.headers,
+      compid
+    }
+  }
+  return {options}
+})
 
 request.interceptors.response.use(async (response, options) => {
   // const contentType = response.headers.get('Content-Type');

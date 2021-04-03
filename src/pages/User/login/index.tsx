@@ -17,6 +17,7 @@ import type { StateType } from '@/models/login';
 import type { LoginParamsType } from '@/services/login';
 import type { ConnectState } from '@/models/connect';
 import styles from './index.less';
+import {history} from 'umi'
 
 export type LoginProps = {
   dispatch: Dispatch;
@@ -43,13 +44,10 @@ const Login: React.FC<LoginProps> = (props) => {
   const [type, setType] = useState<string>('account');
   const intl = useIntl();
 
-  const handleSubmit = (values: LoginParamsType) => {
-    // const { dispatch } = props;
-    // dispatch({
-    //   type: 'login/login',
-    //   payload: { ...values, type },
-    // });
-    login(values)
+  const handleSubmit = async (values: LoginParamsType) => {
+    const {token} = await login(values)
+    localStorage.setItem('token', token)
+    history.replace('/')
   };
 
   return (

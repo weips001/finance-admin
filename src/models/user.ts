@@ -1,5 +1,5 @@
 import type { Effect, Reducer } from 'umi';
-
+import {SubscriptionsMapObject} from 'dva'
 import { queryCurrent, query as queryUsers } from '@/services/user';
 
 export type CurrentUser = {
@@ -31,6 +31,7 @@ export type UserModelType = {
     saveCurrentUser: Reducer<UserModelState>;
     changeNotifyCount: Reducer<UserModelState>;
   };
+  subscriptions: SubscriptionsMapObject
 };
 
 const UserModel: UserModelType = {
@@ -80,6 +81,11 @@ const UserModel: UserModelType = {
       };
     },
   },
+  subscriptions: {
+    init({dispatch}) {
+      console.log('in')
+    }
+  }
 };
 
 export default UserModel;

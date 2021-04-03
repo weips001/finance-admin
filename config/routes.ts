@@ -21,7 +21,6 @@
           {
             path: '/',
             component: '../layouts/BasicLayout',
-            authority: ['admin', 'user'],
             routes: [
               {
                 path: '/',
@@ -29,8 +28,9 @@
               },
               {
                 path: '/welcome',
-                name: 'welcome',
+                name: '欢迎登录',
                 icon: 'smile',
+                authority: 'welcome',
                 component: './Welcome',
               },
               {
@@ -38,14 +38,12 @@
                 name: 'admin',
                 icon: 'crown',
                 component: './Admin',
-                authority: ['admin'],
                 routes: [
                   {
                     path: '/admin/sub-page',
                     name: 'sub-page',
                     icon: 'smile',
                     component: './Welcome',
-                    authority: ['admin'],
                   },
                 ],
               },
@@ -53,6 +51,7 @@
                 name: '公司管理',
                 icon: 'table',
                 path: '/company',
+                authority: 'company',
                 component: './Company',
               },
               // {
@@ -65,6 +64,7 @@
                 name: '付款申请单',
                 icon: 'table',
                 path: '/payment-order',
+                authority: 'paymentOrder',
                 component: './PaymentOrder/list',
               },
               {
@@ -94,13 +94,21 @@
                 name: '发票管理',
                 icon: 'table',
                 path: '/bill',
+                authority: 'bill',
                 component: './Bill',
               },
               {
                 name: '人员管理',
                 icon: 'table',
                 path: '/user-list',
+                authority: 'user',
                 component: './User/list',
+              },
+              {
+                name: '角色管理',
+                icon: 'table',
+                path: '/role',
+                component: './Role',
               },
               {
                 component: './404',

@@ -13,7 +13,6 @@ const waitTime = (time: number = 100) => {
 };
 
 const UpdatePaymentOrder:React.FC = props => {
-  console.log(props)
   const routeParams = useParams<{id: string}>()
 
   const updatePayment = async (values: Record<string, any>) => {
