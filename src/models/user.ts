@@ -1,5 +1,7 @@
 import type { Effect, Reducer } from 'umi';
 import {SubscriptionsMapObject} from 'dva'
+import {getCurrentAuth,getCurrentAuthList,saveUserInfo} from '@/utils/utils'
+import {setAuthority} from '@/utils/authority'
 import { queryCurrent, query as queryUsers } from '@/services/user';
 
 export type CurrentUser = {
@@ -18,6 +20,7 @@ export type CurrentUser = {
 
 export type UserModelState = {
   currentUser?: CurrentUser;
+  currentAllAuthList: any[]
 };
 
 export type UserModelType = {
@@ -39,6 +42,7 @@ const UserModel: UserModelType = {
 
   state: {
     currentUser: {},
+    currentAllAuthList: []
   },
 
   effects: {
@@ -50,22 +54,34 @@ const UserModel: UserModelType = {
       });
     },
     *fetchCurrent(_, { call, put }) {
-      console.log(2)
-      try {
-        const response = yield call(queryCurrent);
-        console.log('response', response)
-        yield put({
-          type: 'saveCurrentUser',
-          payload: response,
-        });
-      } catch (e) {
-        console.log('e', e)
+      const response = yield call(queryCurrent);
+      const {auth, data} = response
+      const userInfo = {
+        ...data,
+        auth
       }
-      
+      saveUserInfo(userInfo)
+      const allAuth = getCurrentAuth(data.role, auth)
+      const currentAuthList = getCurrentAuthList()
+      setAuthority(allAuth)
+      yield put({
+        type: 'saveCurrentUser',
+        payload: response,
+      });
+      yield put({
+        type: 'saveCurrentAuthList',
+        payload: currentAuthList,
+      });
     },
   },
 
   reducers: {
+    saveCurrentAuthList(state, action) {
+      return {
+        ...state,
+        currentAllAuthList: action.payload
+      }
+    },
     saveCurrentUser(state, action) {
       return {
         ...state,

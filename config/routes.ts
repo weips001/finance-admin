@@ -33,20 +33,20 @@
                 authority: 'welcome',
                 component: './Welcome',
               },
-              {
-                path: '/admin',
-                name: 'admin',
-                icon: 'crown',
-                component: './Admin',
-                routes: [
-                  {
-                    path: '/admin/sub-page',
-                    name: 'sub-page',
-                    icon: 'smile',
-                    component: './Welcome',
-                  },
-                ],
-              },
+              // {
+              //   path: '/admin',
+              //   name: 'admin',
+              //   icon: 'crown',
+              //   component: './Admin',
+              //   routes: [
+              //     {
+              //       path: '/admin/sub-page',
+              //       name: 'sub-page',
+              //       icon: 'smile',
+              //       component: './Welcome',
+              //     },
+              //   ],
+              // },
               {
                 name: '公司管理',
                 icon: 'table',
@@ -108,6 +108,7 @@
                 name: '角色管理',
                 icon: 'table',
                 path: '/role',
+                authority: 'role',
                 component: './Role',
               },
               {

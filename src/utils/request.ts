@@ -1,6 +1,7 @@
 /** Request 网络请求工具 更详细的 api 文档: https://github.com/umijs/umi-request */
 import { extend, RequestOptionsInit } from 'umi-request';
 import { notification } from 'antd';
+import {getUserCompId} from './utils'
 
 const codeMessage: Record<number, string> = {
   200: '服务器成功返回请求的数据。',
@@ -48,7 +49,7 @@ const request = extend({
 
 request.interceptors.request.use((request: string, options:RequestOptionsInit) => {
   const token = localStorage.getItem('token')
-  const compid = localStorage.getItem('compid')
+  const compid = getUserCompId()
   if(token) {
     options.headers = {
       ...options.headers,

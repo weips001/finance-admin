@@ -24,7 +24,23 @@ export const isAntDesignProOrDev = (): boolean => {
 
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
-export const getAllAuthCode = () => {
+export const saveUserInfo = (user) => {
+  try {
+    localStorage.setItem('user', JSON.stringify(user))
+  } catch (e) {
+    localStorage.setItem('user', '')
+  }
+}
+
+export const getUserInfo = () => {
+  const userStr = localStorage.getItem('user')
+  if(userStr) {
+    return JSON.parse(userStr)
+  }
+  return null
+}
+
+export const getAllAuthList = () => {
   console.log(routes)
   let auth = []
   function filterRoute(routes) {
@@ -41,6 +57,55 @@ export const getAllAuthCode = () => {
   }
   return filterRoute(routes)
 }
+export const getUserCompId = () => {
+  const user = getUserInfo()
+  if(user) {
+    return user.compId
+  }
+  return null
+}
+const getUserRole = () => {
+  const user = getUserInfo()
+  if(user) {
+    return user.role
+  }
+  return []
+}
 
-let list = getAllAuthCode()
+export const getCurrentAuthList = () => {
+  const role = getUserRole()
+  const superAuth = '-2'
+  const allAuthList = getAllAuthList()
+  if(role.includes(superAuth)) {
+    return allAuthList
+  }
+  return allAuthList.filter(item => item.auth !== 'company')
+}
+
+export const getAllAuthCode = () => {
+  const role = getUserRole()
+  console.log('role---', role)
+  const superAuth = '-2'
+  const allAuthList = getAllAuthList()
+  const authCodeList = allAuthList.map(item => item.auth)
+  if(role.includes(superAuth)) {
+    return authCodeList
+  }
+  return authCodeList.filter(auth => auth !== 'company')
+}
+
+export const getCurrentAuth = (role: string[], auth: string[]):string[] => {
+  const superAuth = '-2'
+  const adminAuth = '-1'
+  const allAuthCode = getAllAuthCode()
+  // 如果不是管理员
+  const isAdmin = role.some(item => item === superAuth || item === adminAuth)
+  if(!isAdmin) {
+    return auth
+  }
+  return allAuthCode
+}
+
+let list = getAllAuthList()
 console.log('list', list)
+

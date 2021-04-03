@@ -4,9 +4,9 @@ import List from './component/list'
 import RoleList from './component/roleList'
 import { Button, Tag, Space, Row, Col } from 'antd';
 import {getTableList} from './service'
-import {getAllAuthCode} from '@/utils/utils'
+import {getAllAuthList} from '@/utils/utils'
 import {GithubIssueItem} from './component/list'
-const authList = getAllAuthCode()
+const authList = getAllAuthList()
 const Role = () => {
   const [checkedList, setCheckedList] = useState([])
   const [isShow, toggleShow] = useState(false)
