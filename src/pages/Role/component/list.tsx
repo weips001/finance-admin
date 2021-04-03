@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
 import ProField from '@ant-design/pro-field';
 import ProCard from '@ant-design/pro-card';
 import { CheckboxValueType } from '_antd@4.14.1@antd/es/checkbox/Group';
 import {getTableList, add, remove} from '../service'
+
+const antIcon = <LoadingOutlined style={{ fontSize: 12 }} spin />
 export type GithubIssueItem = {
   url: string;
   id: number;
@@ -107,15 +111,18 @@ const List:React.FC<ListProps> = (props) => {
         >
           编辑
         </a>,
-        <a
-          key="delete"
-          onClick={async () => {
-            // await remove(record.id)
-            setDataSource(dataSource.filter((item) => item.id !== record.id));
-          }}
-        >
-          删除
-        </a>,
+        // <Fragment>
+        //   <Spin indicator={antIcon} key={record.id} />
+        //   <a
+        //     key={record.id}
+        //     onClick={async () => {
+        //       // await remove(record.id)
+        //       setDataSource(dataSource.filter((item) => item.id !== record.id));
+        //     }}
+        //   >
+        //     删除
+        //   </a>
+        // </Fragment>,
       ],
     },
   ];
@@ -157,9 +164,6 @@ const List:React.FC<ListProps> = (props) => {
             //   id: (Math.random() * 1000000).toFixed(0),
             // });
           },
-          // onDelete: () => {
-          //   console.log(333)
-          // },
           onChange: setEditableRowKeys,
         }}
       />
