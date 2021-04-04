@@ -1,29 +1,30 @@
-import {useEffect, useState} from 'react';
-import {Checkbox,Divider,Row,Col,Card,Button} from 'antd';
-import { CheckboxChangeEvent } from '_antd@4.14.1@antd/lib/checkbox';
-import { CheckboxValueType } from '_antd@4.14.1@antd/es/checkbox/Group';
-import {getAllAuthCode} from '@/utils/utils'
-import {connect} from 'dva'
-import {edit} from '../service'
+import { useEffect, useState } from 'react';
+import { Checkbox, Divider, Row, Col, Card, Button } from 'antd';
+import type { CheckboxChangeEvent } from '_antd@4.14.1@antd/lib/checkbox';
+import type { CheckboxValueType } from '_antd@4.14.1@antd/es/checkbox/Group';
+import { getAllAuthCode } from '@/utils/utils';
+import { connect } from 'dva';
+import { edit } from '../service';
+
 const CheckboxGroup = Checkbox.Group;
 type RoleListProps = {
-  currentAllAuthList: {label: string, auth: string}[]
-  currentRow: {}
-}
+  currentAllAuthList: { label: string; auth: string }[];
+  currentRow: {};
+};
 
-const RoleList:React.FC<RoleListProps> = (props) => {
-  console.log('render', props)
-  const {currentRow, currentAllAuthList} = props
+const RoleList: React.FC<RoleListProps> = (props) => {
+  console.log('render', props);
+  const { currentRow, currentAllAuthList } = props;
   const [checkedList, setCheckedList] = useState<CheckboxValueType[]>([]);
   const [indeterminate, setIndeterminate] = useState(true);
   const [checkAll, setCheckAll] = useState(false);
-  let allAuthCode = getAllAuthCode()
+  const allAuthCode = getAllAuthCode();
   useEffect(() => {
-    if(currentRow.id) {
+    if (currentRow.id) {
       // console.log('123in', currentRow)
-      setCheckedList(currentRow.auth)
+      setCheckedList(currentRow.auth);
     }
-  }, [currentRow.id])
+  }, [currentRow.id]);
   const onChange = (list: CheckboxValueType[]) => {
     setCheckedList(list);
     setIndeterminate(!!list.length && list.length < allAuthCode.length);
@@ -38,12 +39,11 @@ const RoleList:React.FC<RoleListProps> = (props) => {
   const addRole = async () => {
     const params = {
       ...currentRow,
-      auth: checkedList
-    }
-    edit(params)
-    console.log('checkedList---', currentRow)
-
-  }
+      auth: checkedList,
+    };
+    edit(params);
+    console.log('checkedList---', currentRow);
+  };
   return (
     <Card>
       <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
@@ -51,26 +51,26 @@ const RoleList:React.FC<RoleListProps> = (props) => {
       </Checkbox>
       <Divider />
       <CheckboxGroup value={checkedList} onChange={onChange}>
-      <Row>
-        {
-          currentAllAuthList.map(item => (
+        <Row>
+          {currentAllAuthList.map((item) => (
             <Col span={24} key={item.auth}>
               <Checkbox value={item.auth}>{item.label}</Checkbox>
             </Col>
-          ))
-        }
-      </Row>
+          ))}
+        </Row>
       </CheckboxGroup>
       <Row justify="end">
-        <Button type="primary" onClick={addRole}>确定</Button>
+        <Button type="primary" onClick={addRole}>
+          确定
+        </Button>
       </Row>
     </Card>
   );
-}
+};
 
-export default connect(state =>  {
-  console.log('state',state)
-  return ({
-    currentAllAuthList: state.user.currentAllAuthList
-  })
-})(RoleList)
+export default connect((state) => {
+  console.log('state', state);
+  return {
+    currentAllAuthList: state.user.currentAllAuthList,
+  };
+})(RoleList);

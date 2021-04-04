@@ -1,7 +1,8 @@
 /** Request 网络请求工具 更详细的 api 文档: https://github.com/umijs/umi-request */
-import { extend, RequestOptionsInit } from 'umi-request';
+import type { RequestOptionsInit } from 'umi-request';
+import { extend } from 'umi-request';
 import { notification } from 'antd';
-import {getUserCompId} from './utils'
+import { getUserCompId } from './utils';
 
 const codeMessage: Record<number, string> = {
   200: '服务器成功返回请求的数据。',
@@ -22,7 +23,7 @@ const codeMessage: Record<number, string> = {
 };
 
 /** 异常处理程序 */
-const errorHandler = (error: { response: Response}): Response => {
+const errorHandler = (error: { response: Response }): Response => {
   const { response } = error;
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
@@ -47,33 +48,33 @@ const request = extend({
   credentials: 'include', // 默认请求是否带上cookie
 });
 
-request.interceptors.request.use((request: string, options:RequestOptionsInit) => {
-  const token = localStorage.getItem('token')
-  const compid = getUserCompId()
-  if(token) {
+request.interceptors.request.use((request: string, options: RequestOptionsInit) => {
+  const token = localStorage.getItem('token');
+  const compid = getUserCompId();
+  if (token) {
     options.headers = {
       ...options.headers,
       token,
-      authorization: token
-    }
+      authorization: `Bearer ${token}`,
+    };
   }
-  if(compid) {
+  if (compid) {
     options.headers = {
       ...options.headers,
-      compid
-    }
+      compid,
+    };
   }
-  return {options}
-})
+  return { options };
+});
 
 request.interceptors.response.use(async (response, options) => {
   // const contentType = response.headers.get('Content-Type');
   // console.log('1')
   const res = await response.clone().json();
-  const {code, msg} = res
+  const { code, msg } = res;
   if (code === 0) {
     // message.success(msg)
-    return response
+    return response;
   }
   notification.error({
     message: `操作失败`,

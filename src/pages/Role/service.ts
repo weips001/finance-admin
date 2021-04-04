@@ -10,19 +10,19 @@ export async function getTableList(params?: TableListParams) {
 export async function add(data?: TableListParams) {
   return request('/api/role', {
     data,
-    method: "POST"
+    method: 'POST',
   });
 }
 
 export async function edit(data?: TableListParams) {
   return request(`/api/role/${data.id}`, {
     data,
-    method: "PUT"
+    method: 'PUT',
   });
 }
 
 export async function remove(id: string) {
   return request(`/api/role/${id}`, {
-    method: "DELETE"
+    method: 'DELETE',
   });
 }
