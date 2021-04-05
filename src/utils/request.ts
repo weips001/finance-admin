@@ -3,6 +3,7 @@ import type { RequestOptionsInit } from 'umi-request';
 import { extend } from 'umi-request';
 import { notification } from 'antd';
 import { getUserCompId } from './utils';
+import { history } from 'umi'
 
 const codeMessage: Record<number, string> = {
   200: '服务器成功返回请求的数据。',
@@ -68,21 +69,18 @@ request.interceptors.request.use((request: string, options: RequestOptionsInit) 
 });
 
 request.interceptors.response.use(async (response, options) => {
-  // const contentType = response.headers.get('Content-Type');
-  // console.log('1')
   const res = await response.clone().json();
-  const { code, msg } = res;
+  const { code } = res;
+  if (code === 'Unauthorized') {
+    if (window.location.pathname !== '/user/login') {
+      history.replace('/user/login')
+    }
+    return response
+  }
   if (code === 0) {
-    // message.success(msg)
     return response;
   }
-  notification.error({
-    message: `操作失败`,
-    description: msg,
-  });
-  // message.error(msg)
   return Promise.reject(res);
-  // throw new Error()
 });
 
 export default request;

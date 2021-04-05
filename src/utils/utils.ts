@@ -40,16 +40,24 @@ export const getUserInfo = () => {
   return null
 }
 
-export const getAllAuthList = () => {
-  console.log(routes)
+export const getUserCompId = ():string|null => {
+  const user = getUserInfo()
+  if(user) {
+    return user.compId
+  }
+  return null
+}
+
+export const getAllAuthFromRoutes = () => {
   let auth = []
   function filterRoute(routes) {
+    routes = JSON.parse(JSON.stringify(routes))
     routes.forEach(item => {
       if(item.routes) {
         filterRoute(item.routes)
       } else {
         if(item.authority) {
-          auth.push({label: item.name, auth: item.authority})
+          auth.push({label: item.name, value: item.authority})
         }
       }
     })
@@ -57,44 +65,41 @@ export const getAllAuthList = () => {
   }
   return filterRoute(routes)
 }
-export const getUserCompId = () => {
+
+const getUserRole = (): string[] => {
   const user = getUserInfo()
-  if(user) {
-    return user.compId
-  }
-  return null
-}
-const getUserRole = () => {
-  const user = getUserInfo()
-  if(user) {
+  console.log('user', user)
+  if(user && user.role) {
     return user.role
   }
   return []
 }
-
-export const getCurrentAuthList = () => {
+// 获取当前用户所有的权限
+export const getCurrentAllAuth = () => {
+  // 处理超级管理员和每个公司的管理员
   const role = getUserRole()
   const superAuth = '-2'
-  const allAuthList = getAllAuthList()
+  const allAuthList = getAllAuthFromRoutes()
   if(role.includes(superAuth)) {
     return allAuthList
   }
-  return allAuthList.filter(item => item.auth !== 'company')
+  // 所有公司的权限应该去除公司管理的页面
+  return allAuthList.filter(item => item.value !== 'company')
 }
-
-export const getAllAuthCode = () => {
+// 获取所有的权限code码
+export const getAllAuthCode = ():string[] => {
   const role = getUserRole()
   console.log('role---', role)
   const superAuth = '-2'
-  const allAuthList = getAllAuthList()
-  const authCodeList = allAuthList.map(item => item.auth)
+  const allAuthList = getAllAuthFromRoutes()
+  const authCodeList = allAuthList.map(item => item.value)
   if(role.includes(superAuth)) {
     return authCodeList
   }
   return authCodeList.filter(auth => auth !== 'company')
 }
-
-export const getCurrentAuth = (role: string[], auth: string[]):string[] => {
+// 获取用户的auth码，如果为 -2或者-1 则为管理员权限，否则以传入的auth为准
+export const getUserAuth = (role: string[] = [], auth: string[] = []):string[] => {
   const superAuth = '-2'
   const adminAuth = '-1'
   const allAuthCode = getAllAuthCode()
@@ -106,6 +111,14 @@ export const getCurrentAuth = (role: string[], auth: string[]):string[] => {
   return allAuthCode
 }
 
-let list = getAllAuthList()
-console.log('list', list)
-
+export const delay = (isSuccess = true, ms = 2000) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if(isSuccess) {
+        resolve(null)
+      } else {
+        reject()
+      }
+    }, ms)
+  })
+}

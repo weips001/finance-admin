@@ -21,15 +21,15 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
   };
 
   componentDidMount() {
-    // this.setState({
-    //   isReady: true,
-    // });
-    // const { dispatch } = this.props;
-    // if (dispatch) {
-    //   dispatch({
-    //     type: 'user/fetchCurrent',
-    //   });
-    // }
+    this.setState({
+      isReady: true,
+    });
+    const { dispatch } = this.props;
+    if (dispatch) {
+      dispatch({
+        type: 'user/fetchCurrent',
+      });
+    }
   }
 
   render() {

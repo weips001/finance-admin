@@ -206,8 +206,8 @@ const TableList: React.FC = () => {
   return (
     <PageContainer>
       <ProTable<TableListItem>
-        headerTitle="查询表格"
-        bordered={true}
+        headerTitle="公司列表"
+        bordered
         actionRef={actionRef}
         rowKey="id"
         search={{

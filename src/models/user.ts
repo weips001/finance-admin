@@ -1,6 +1,6 @@
 import type { Effect, Reducer } from 'umi';
 import {SubscriptionsMapObject} from 'dva'
-import {getCurrentAuth,getCurrentAuthList,saveUserInfo} from '@/utils/utils'
+import {getUserAuth,getCurrentAllAuth,saveUserInfo} from '@/utils/utils'
 import {setAuthority} from '@/utils/authority'
 import { queryCurrent, query as queryUsers } from '@/services/user';
 
@@ -55,14 +55,14 @@ const UserModel: UserModelType = {
     },
     *fetchCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);
-      const {auth, data} = response
+      const {auth = [], data = {}} = response
       const userInfo = {
         ...data,
         auth
       }
       saveUserInfo(userInfo)
-      const allAuth = getCurrentAuth(data.role, auth)
-      const currentAuthList = getCurrentAuthList()
+      const allAuth = getUserAuth(data.role, auth)
+      const currentAuthList = getCurrentAllAuth()
       setAuthority(allAuth)
       yield put({
         type: 'saveCurrentUser',

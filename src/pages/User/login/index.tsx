@@ -39,7 +39,7 @@ const LoginMessage: React.FC<{
 );
 
 const Login: React.FC<LoginProps> = (props) => {
-  const { userLogin = {}, submitting } = props;
+  const { userLogin = {}, submitting, dispatch } = props;
   const { status, type: loginType } = userLogin;
   const [type, setType] = useState<string>('account');
   const intl = useIntl();
@@ -47,6 +47,9 @@ const Login: React.FC<LoginProps> = (props) => {
   const handleSubmit = async (values: LoginParamsType) => {
     const {token} = await login(values)
     localStorage.setItem('token', token)
+    await dispatch({
+      type: 'user/fetchCurrent',
+    })
     history.replace('/')
   };
 

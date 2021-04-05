@@ -40,7 +40,7 @@ const Model: LoginModelType = {
         payload: response,
       });
       // Login successfully
-      if (response.status === 'ok') {
+      if (response.code === '0') {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         message.success('🎉 🎉 🎉  登录成功！');
@@ -63,8 +63,10 @@ const Model: LoginModelType = {
 
     logout() {
       const { redirect } = getPageQuery();
+      console.log('redirect', redirect)
       // Note: There may be security issues, please note
       saveUserInfo('')
+      setAuthority([])
       if (window.location.pathname !== '/user/login' && !redirect) {
         history.replace({
           pathname: '/user/login',

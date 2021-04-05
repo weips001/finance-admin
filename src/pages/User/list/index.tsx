@@ -1,15 +1,16 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Drawer, Tag, FormInstance } from 'antd';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { ModalForm, ProFormText } from '@ant-design/pro-form';
+import { ModalForm, ProFormText,ProFormCheckbox } from '@ant-design/pro-form';
 import type { ProDescriptionsItemProps } from '@ant-design/pro-descriptions';
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { FormValueType } from './components/UpdateForm';
 import type { TableListItem } from './data.d';
 import { queryRule, updateRule, addRule, removeRule } from './service';
+import {getTableList} from '@/pages/Role/service'
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 const {confirm} = Modal
 /**
@@ -81,7 +82,19 @@ const TableList: React.FC = () => {
   const modalRef = useRef<FormInstance>()
   const [currentRow, setCurrentRow] = useState<TableListItem>();
   const [selectedRowsState, setSelectedRows] = useState<string[]>([]);
-  
+  const [roleList, setRoleList] = useState([])
+  useEffect(() => {
+    async function getRoleList () {
+      const {data = []} = await getTableList()
+      console.log(data)
+      const list = data.map(item => ({
+        value: item.id,
+        label: item.name
+      }))
+      setRoleList(list)
+    }
+    getRoleList()
+  }, [])
   const handleRemove = async (selectedRows: string[]) => {
     if (!selectedRows) return true;
     try {
@@ -137,6 +150,14 @@ const TableList: React.FC = () => {
     {
       title: '姓名',
       dataIndex: 'userName',
+    },
+    {
+      title: '角色',
+      dataIndex: 'roleName',
+      render(_, record) {
+        const roleName = record.roleName.join('、')
+        return roleName
+      }
     },
     {
       title: '部门',
@@ -266,17 +287,18 @@ const TableList: React.FC = () => {
         visible={createModalVisible}
         onVisibleChange={onVisibleChange}
         onFinish={async (value) => {
-          console.log('---', value)
+          let params = {
+            ...value,
+          }
           let success
           if(currentRow?.id) {
-            const params = {
+            params = {
               ...currentRow,
               ...value
             }
             success = await handleUpdate(params);
           } else {
-             success = await handleAdd(value as TableListItem);
-
+            success = await handleAdd(params as TableListItem);
           }
 
           if (success) {
@@ -325,6 +347,12 @@ const TableList: React.FC = () => {
             },
           ]}
         />
+          <ProFormCheckbox.Group
+            name="role"
+            rules={[{required: true}]}
+            label="角色"
+            options={roleList}
+          />
         <ProFormText
           label="部门"
           width="md"
