@@ -7,7 +7,7 @@ export const dva = {
     onError(e: Error) {
       console.log(e)
       const {msg = '位置错误'} = e
-      // message.error(e, 3);
+      // message.error(e, 3) ;
       notification.error({
         message: `操作失败`,
         description: msg,
